@@ -373,6 +373,10 @@ async function runHttpServer(port: number): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  // All installed and legacy CLI/HTTP/scheduler invocations use the sealed V1 entry.
+  const { main: researcherMain } = await import('./researcher/main.js');
+  await researcherMain();
+  return;
   const command = process.argv[2] ?? 'stdio';
 
   switch (command) {

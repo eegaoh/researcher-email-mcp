@@ -1,4 +1,19 @@
-# Email MCP Server
+# Researcher Email MCP — 本地审稿邮件工具
+
+This public fork retains upstream history and LGPL attribution. Its installed
+entry point is **strictly read-only**, with local multi-account IMAP and
+evidence-based peer-review tracking. SMTP code is retained but disabled.
+
+**Current usage:** [中文配置与安全指南](README.zh-CN.md), [upstream provenance](UPSTREAM.md).
+Run `npm ci --ignore-scripts`, `npm run build`, then `node dist/researcher/main.js help`.
+No credentials or real email fixtures belong in this repository.
+
+The following original upstream README is preserved for attribution/history.
+Its sending, HTTP, scheduler and auto-triage instructions **do not apply to this fork's V1**.
+
+---
+
+# Email MCP Server (upstream reference)
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![license](https://img.shields.io/github/license/codefuturist/email-mcp.svg?style=flat-square)](LICENSE)
