@@ -1,0 +1,16 @@
+import { accepted,invitation } from '../dist/researcher/fixtures.js';
+import { parseMail } from '../dist/researcher/mail.js';
+import { extract,merge } from '../dist/researcher/reviews.js';
+import { markdown,csvReport } from '../dist/researcher/report.js';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const dir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..','examples');
+const mails=await Promise.all([accepted,invitation].map((raw,i)=>parseMail(raw,{account:'synthetic',mailbox:'INBOX',uidValidity:'777',uid:i+1})));
+const events=mails.map(extract).filter(Boolean);
+const scan={generatedAt:'2026-10-14T00:00:00.000Z',since:'2025-10-14',tasks:merge(events),coverage:[{account:'synthetic',mailbox:'INBOX',uidValidity:'777',since:'2025-10-14',before:null,mode:'synthetic-fixtures',limited:false}],errors:[],skipped:[],olderLookup:false,complete:true};
+await fs.mkdir(dir,{recursive:true});
+await fs.writeFile(path.join(dir,'synthetic-review-report.md'),markdown(scan));
+await fs.writeFile(path.join(dir,'synthetic-review-report.csv'),csvReport(scan));
+await fs.writeFile(path.join(dir,'synthetic-review-report.json'),JSON.stringify(scan,null,2)+'\n');
+console.log('Synthetic example reports generated (no real mailbox).');

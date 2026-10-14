@@ -1,31 +1,35 @@
 {
-  "name": "@codefuturist/email-mcp",
-  "version": "0.2.3",
-  "mcpName": "io.github.codefuturist/email-mcp",
-  "description": "Email MCP server with IMAP + SMTP support",
+  "name": "@eegaoh/researcher-email-mcp",
+  "private": true,
+  "version": "0.1.0",
+  "mcpName": "io.github.eegaoh/researcher-email-mcp",
+  "description": "Strictly read-only local IMAP and evidence-based peer-review tracker",
   "type": "module",
   "bin": {
-    "email-mcp": "./dist/main.js"
+    "researcher-email-mcp": "./dist/researcher/main.js"
   },
-  "main": "./dist/main.js",
-  "types": "./dist/main.d.ts",
+  "main": "./dist/researcher/main.js",
+  "types": "./dist/researcher/main.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsx watch src/main.ts",
+    "dev": "tsx watch src/researcher/main.ts",
     "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/main.js",
+    "start": "node dist/researcher/main.js",
+    "test:researcher": "vitest run --config vitest.researcher.ts",
+    "test:researcher:integration": "vitest run --config vitest.researcher.ts --testNamePattern=integration",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/",
+    "lint": "biome check src/researcher --diagnostic-level=error",
+    "privacy:check": "node scripts/check-publication.mjs",
     "lint:fix": "eslint src/ --fix",
     "format": "biome format --write src/",
     "format:check": "biome check src/",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:integration": "vitest run --config vitest.config.integration.ts",
-    "test:all": "vitest run && vitest run --config vitest.config.integration.ts",
+    "test": "vitest run --config vitest.researcher.ts",
+    "test:watch": "vitest --config vitest.researcher.ts",
+    "test:coverage": "vitest run --config vitest.researcher.ts --coverage",
+    "test:integration": "vitest run --config vitest.researcher.ts src/researcher/integration.test.ts",
+    "test:all": "npm run typecheck && npm run build && npm test",
     "check": "biome check src/ && eslint src/",
     "report": "mkdir -p reports && biome check src/ --reporter=json > reports/biome.json 2>&1; eslint src/ -f json -o reports/eslint.json; actionlint -format '{{json .}}' > reports/actionlint.json 2>&1; pnpm test",
     "commit": "cog commit",
@@ -35,7 +39,7 @@
     "version:bump:minor": "cog bump --minor",
     "version:bump:patch": "cog bump --patch",
     "version:log": "cog log",
-    "prepare": "lefthook install || true",
+    "prepare": "node -e \"console.log('Automatic Git hooks disabled in Researcher fork')\"",
     "hooks:install": "lefthook install --force",
     "hooks:uninstall": "lefthook uninstall",
     "docker:build": "docker build -t codefuturist/email-mcp .",
@@ -68,18 +72,20 @@
   "license": "LGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codefuturist/email-mcp.git"
+    "url": "git+https://github.com/eegaoh/researcher-email-mcp.git"
   },
-  "homepage": "https://github.com/codefuturist/email-mcp#readme",
+  "homepage": "https://github.com/eegaoh/researcher-email-mcp#readme",
   "bugs": {
-    "url": "https://github.com/codefuturist/email-mcp/issues"
+    "url": "https://github.com/eegaoh/researcher-email-mcp/issues"
   },
   "dependencies": {
     "@clack/prompts": "^1.0.1",
     "@modelcontextprotocol/sdk": "^1.26.0",
+    "csv-parse": "^7.0.3",
     "imapflow": "^1.2.9",
+    "mailparser": "^3.9.39",
     "node-ical": "^0.25.2",
-    "nodemailer": "^8.0.1",
+    "nodemailer": "^10.1.1",
     "smol-toml": "^1.6.0",
     "zod": "^4.3.6"
   },
@@ -87,6 +93,7 @@
     "@biomejs/biome": "^2.4.2",
     "@eslint/compat": "^2.0.2",
     "@eslint/js": "^9.39.2",
+    "@types/mailparser": "^3.9.0",
     "@types/node": "^25.2.3",
     "@types/nodemailer": "^7.0.10",
     "@vitest/coverage-v8": "^4.0.18",
@@ -101,5 +108,5 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "npm@11.12.1"
 }

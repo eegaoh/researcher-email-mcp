@@ -5,6 +5,7 @@
  */
 
 import type { ImapFlow } from 'imapflow';
+import { sealWrites } from '../researcher/policy.js';
 import type { IConnectionManager } from '../connections/types.js';
 import { sanitizeMailboxName, sanitizeSearchQuery } from '../safety/validation.js';
 import type {
@@ -219,7 +220,11 @@ export default class ImapService {
 
   private labelStrategyPending = new Map<string, Promise<LabelStrategy>>();
 
-  constructor(private connections: IConnectionManager) {}
+  constructor(private connections: IConnectionManager) {
+    sealWrites(this, ['addLabel', 'removeLabel', 'createLabel', 'deleteLabel', 'moveEmail',
+      'deleteEmail', 'setFlags', 'bulkSetFlags', 'bulkMove', 'bulkDelete', 'saveDraft',
+      'deleteDraft', 'createMailbox', 'renameMailbox', 'deleteMailbox']);
+  }
 
   private async getLabelStrategy(accountName: string): Promise<LabelStrategy> {
     const cached = this.labelStrategies.get(accountName);

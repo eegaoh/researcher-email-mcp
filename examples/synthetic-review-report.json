@@ -1,0 +1,177 @@
+{
+  "generatedAt": "2026-10-14T00:00:00.000Z",
+  "since": "2025-10-14",
+  "tasks": [
+    {
+      "id": "synthetic energy journal:SEJ-2026-1234",
+      "journal": "Synthetic Energy Journal",
+      "manuscript": "SEJ-2026-1234",
+      "round": 0,
+      "status": "已接受待审",
+      "needsConfirmation": false,
+      "deadline": {
+        "kind": "审稿",
+        "date": "2026-10-20",
+        "raw": "20 October 2026",
+        "timezone": "UTC+8",
+        "needsConfirmation": false,
+        "extension": false,
+        "evidence": {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0:审稿期限:WW91ciByZXZpZXcgaXMgZHVlIG9uIDIwIE9jdG9iZXIgMjAyNiBVVEMrOC4",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "Your review is due on 20 October 2026 UTC+8.",
+          "kind": "审稿期限",
+          "untrusted": true
+        }
+      },
+      "deadlineHistory": [
+        {
+          "kind": "审稿",
+          "date": "2026-10-20",
+          "raw": "20 October 2026",
+          "timezone": "UTC+8",
+          "needsConfirmation": false,
+          "extension": false,
+          "evidence": {
+            "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0:审稿期限:WW91ciByZXZpZXcgaXMgZHVlIG9uIDIwIE9jdG9iZXIgMjAyNiBVVEMrOC4",
+            "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0",
+            "date": "2026-10-12T02:00:00.000Z",
+            "excerpt": "Your review is due on 20 October 2026 UTC+8.",
+            "kind": "审稿期限",
+            "untrusted": true
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0:接受审稿:VGhhbmsgeW91IGZvciBhZ3JlZWluZyB0byByZXZpZXcgdGhpcyBtYW51c2NyaXB0",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "Thank you for agreeing to review this manuscript.",
+          "kind": "接受审稿",
+          "untrusted": true
+        },
+        {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0:审稿期限:WW91ciByZXZpZXcgaXMgZHVlIG9uIDIwIE9jdG9iZXIgMjAyNiBVVEMrOC4",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "Your review is due on 20 October 2026 UTC+8.",
+          "kind": "审稿期限",
+          "untrusted": true
+        }
+      ],
+      "sources": [
+        "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMV0"
+      ],
+      "warnings": [],
+      "localArchive": null,
+      "title": "Synthetic Frequency Study"
+    },
+    {
+      "id": "synthetic energy journal:SEJ-2026-5555",
+      "journal": "Synthetic Energy Journal",
+      "manuscript": "SEJ-2026-5555",
+      "round": 0,
+      "status": "邀请待响应",
+      "needsConfirmation": false,
+      "deadline": {
+        "kind": "邀请回复",
+        "date": "2026-10-15",
+        "raw": "2026-10-15",
+        "timezone": "UTC+8",
+        "needsConfirmation": false,
+        "extension": false,
+        "evidence": {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0:邀请回复期限:UGxlYXNlIHJlc3BvbmQgdG8gdGhpcyBpbnZpdGF0aW9uIGJ5IDIwMjYtMTAtMTUg",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "Please respond to this invitation by 2026-10-15 UTC+8.",
+          "kind": "邀请回复期限",
+          "untrusted": true
+        }
+      },
+      "deadlineHistory": [
+        {
+          "kind": "邀请回复",
+          "date": "2026-10-15",
+          "raw": "2026-10-15",
+          "timezone": "UTC+8",
+          "needsConfirmation": false,
+          "extension": false,
+          "evidence": {
+            "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0:邀请回复期限:UGxlYXNlIHJlc3BvbmQgdG8gdGhpcyBpbnZpdGF0aW9uIGJ5IDIwMjYtMTAtMTUg",
+            "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0",
+            "date": "2026-10-12T02:00:00.000Z",
+            "excerpt": "Please respond to this invitation by 2026-10-15 UTC+8.",
+            "kind": "邀请回复期限",
+            "untrusted": true
+          }
+        },
+        {
+          "kind": "审稿",
+          "date": "2026-10-25",
+          "raw": "2026-10-25",
+          "timezone": "UTC+8",
+          "needsConfirmation": false,
+          "extension": false,
+          "evidence": {
+            "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0:审稿期限:WW91ciByZXZpZXcgZGVhZGxpbmUgaXMgMjAyNi0xMC0yNSBVVEMrOC4",
+            "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0",
+            "date": "2026-10-12T02:00:00.000Z",
+            "excerpt": "Your review deadline is 2026-10-25 UTC+8.",
+            "kind": "审稿期限",
+            "untrusted": true
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0:审稿邀请:V2UgaW52aXRlIHlvdSB0byByZXZpZXcgdGhpcyBtYW51c2NyaXB0Lg",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "We invite you to review this manuscript.",
+          "kind": "审稿邀请",
+          "untrusted": true
+        },
+        {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0:邀请回复期限:UGxlYXNlIHJlc3BvbmQgdG8gdGhpcyBpbnZpdGF0aW9uIGJ5IDIwMjYtMTAtMTUg",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "Please respond to this invitation by 2026-10-15 UTC+8.",
+          "kind": "邀请回复期限",
+          "untrusted": true
+        },
+        {
+          "id": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0:审稿期限:WW91ciByZXZpZXcgZGVhZGxpbmUgaXMgMjAyNi0xMC0yNSBVVEMrOC4",
+          "sourceId": "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0",
+          "date": "2026-10-12T02:00:00.000Z",
+          "excerpt": "Your review deadline is 2026-10-25 UTC+8.",
+          "kind": "审稿期限",
+          "untrusted": true
+        }
+      ],
+      "sources": [
+        "WyJzeW50aGV0aWMiLCJJTkJPWCIsIjc3NyIsMl0"
+      ],
+      "warnings": [],
+      "localArchive": null,
+      "title": null
+    }
+  ],
+  "coverage": [
+    {
+      "account": "synthetic",
+      "mailbox": "INBOX",
+      "uidValidity": "777",
+      "since": "2025-10-14",
+      "before": null,
+      "mode": "synthetic-fixtures",
+      "limited": false
+    }
+  ],
+  "errors": [],
+  "skipped": [],
+  "olderLookup": false,
+  "complete": true
+}

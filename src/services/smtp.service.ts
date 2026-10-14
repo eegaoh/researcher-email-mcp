@@ -5,6 +5,7 @@
  */
 
 import type { IConnectionManager } from '../connections/types.js';
+import { sealWrites } from '../researcher/policy.js';
 import type RateLimiter from '../safety/rate-limiter.js';
 import type { SendResult } from '../types/index.js';
 import type ImapService from './imap.service.js';
@@ -14,7 +15,7 @@ export default class SmtpService {
     private connections: IConnectionManager,
     private rateLimiter: RateLimiter,
     private imapService: ImapService,
-  ) {}
+  ) { sealWrites(this, ['sendEmail', 'replyToEmail', 'forwardEmail', 'sendDraft']); }
 
   // -------------------------------------------------------------------------
   // Send email

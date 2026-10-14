@@ -117,7 +117,7 @@ export const HooksConfigSchema = z.object({
 
 export const SettingsSchema = z.object({
   rate_limit: z.number().int().min(1).default(10),
-  read_only: z.boolean().default(false),
+  read_only: z.boolean().default(true),
   watcher: WatcherConfigSchema.default({
     enabled: false,
     folders: ['INBOX'],
@@ -147,7 +147,7 @@ export const SettingsSchema = z.object({
 export const AppConfigFileSchema = z.object({
   settings: SettingsSchema.default({
     rate_limit: 10,
-    read_only: false,
+    read_only: true,
     watcher: {
       enabled: false,
       folders: ['INBOX'],

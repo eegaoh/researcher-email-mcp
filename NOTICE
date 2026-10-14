@@ -1,0 +1,10 @@
+Researcher Email MCP
+Derived from codefuturist/email-mcp, baseline commit
+99ce431aa81dd4cafc2879bd35b6ee3acd0f2d74.
+Upstream author: codefuturist and upstream contributors.
+License: LGPL-3.0-or-later; see LICENSE.
+
+Modifications by eegaoh, 2026-10-14:
+strict read-only entry and connection/service policy, local credential adapter,
+standard MIME decoding, multi-account review evidence tracking, local reports,
+synthetic tests, independent CI and Codex registration support.

@@ -6,6 +6,7 @@
  */
 
 import crypto from 'node:crypto';
+import { sealWrites } from '../researcher/policy.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -24,7 +25,7 @@ export default class SchedulerService {
   constructor(
     private smtpService: SmtpService,
     private imapService: ImapService,
-  ) {}
+  ) { sealWrites(this, ['schedule', 'checkAndSend']); }
 
   // -------------------------------------------------------------------------
   // Schedule a new email

@@ -1,0 +1,6 @@
+# Keep new-module formatting identical on Windows and Linux checkouts.
+src/researcher/*.ts text eol=lf
+vitest.researcher.ts text eol=lf
+scripts/*.mjs text eol=lf
+scripts/*.ps1 text eol=lf
+.github/workflows/researcher-ci.yml text eol=lf

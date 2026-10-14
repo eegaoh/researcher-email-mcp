@@ -1,0 +1,21 @@
+{
+  "accounts": [
+    {
+      "id": "qq",
+      "label": "QQ (synthetic example)",
+      "email": "reviewer@example.invalid",
+      "credentialRef": "researcher-email-mcp/qq",
+      "imap": { "host": "imap.qq.com", "port": 993, "secure": true }
+    },
+    {
+      "id": "zju",
+      "label": "ZJU (synthetic example)",
+      "email": "reviewer@example.invalid",
+      "credentialRef": "researcher-email-mcp/zju",
+      "imap": { "host": "imap.zju.edu.cn", "port": 993, "secure": true }
+    }
+  ],
+  "maxMessageBytes": 10485760,
+  "maxBodyChars": 40000,
+  "maxFolderMessages": 2000
+}
