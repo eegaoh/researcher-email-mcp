@@ -21,6 +21,7 @@
     "test:researcher:integration": "vitest run --config vitest.researcher.ts --testNamePattern=integration",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src/researcher --diagnostic-level=error",
+    "privacy:check": "node scripts/check-publication.mjs",
     "lint:fix": "eslint src/ --fix",
     "format": "biome format --write src/",
     "format:check": "biome check src/",

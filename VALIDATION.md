@@ -1,4 +1,34 @@
-# V1 validation — 2026-10-14
+# Reusable audit helpers — 2026-10-15
+
+Local Windows checks: typecheck, error-level Biome lint and build passed; all 66
+synthetic tests passed across four files, and the isolated actual stdio handshake
+returned exactly nine read-only tools and zero accounts. Synthetic
+tests and loopback IMAP checks cover header-only indexing (ENVELOPE, no BODY),
+read-only evidence collection (EXAMINE/BODY.PEEK), unchanged sampled counts/flags,
+folder limits and partial failures, exact source identity and stale UIDVALIDITY,
+redaction, manuscript/report section exclusion, unrecognized evidence gaps,
+unique local report paths and real CLI offline report generation.
+
+Regression fixtures are invented: unlabelled identifiers, suffix R1/R2 (including
+suffixes without separators), DD-Mon-YYYY, whitespace text + HTML alternatives,
+unnumbered re-review after a previous round receipt, extension requests versus
+approved extensions, and author revision versus reviewer deadlines. All review
+conclusions remain heuristic candidates; no relative-date guessing was added.
+
+The publication guard checks staged file contents, private artifact names,
+non-synthetic email addresses, token/literal-secret patterns, local private paths
+and encoded non-synthetic source identifiers. This is defense in depth, not an
+anonymization proof. Only generic authored code and synthetic tests are included;
+no real assignments, accounts, messages, attachments, credential values or private
+reports were copied. Existing private scripts/reports and account configuration
+remain untouched. The stdio smoke test now uses its own empty temporary root and
+never loads the user's configured accounts. Windows/Linux CI must pass on the
+exact PR head before merge; remote results are not inferred from local results.
+
+Runtime dependency audit for this development check: zero advisories. Historical
+V1 validation and development-dependency limitations follow below.
+
+# Historical V1 validation — 2026-10-14
 
 Status: local Windows engineering checks passed; real QQ/ZJU accounts await user-owned credential entry. No actual email or attachments were accessed for these checks.
 

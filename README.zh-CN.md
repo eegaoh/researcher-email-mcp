@@ -52,6 +52,8 @@ verify 抽样读取最近5封、批量读取与第一封附件，对比计数和
 
 ## Codex 接入
 
+通用标题扫描、行政证据补读、脱敏与遗漏核对命令见 [审稿证据核对指南](docs/review-audit.md)。新命令只在本机保存独立产物，真实报告不进入仓库；合成测试与发布检查为 `npm test`、`npm run privacy:check`。
+
 本机注册独立 stdio 项，保留所有既有 Codex 配置。示例中的 `<...>` 要换成本机实际绝对路径，不要提交用户级 config.toml。
 
 ```powershell

@@ -112,7 +112,13 @@ export class SyntheticImapServer {
           for (const uid of ids) {
             const raw = this.messages[uid - 1];
             const flags = [...(this.flags.get(uid) ?? [])].join(' ');
-            const fields = `UID ${uid} FLAGS (${flags}) RFC822.SIZE ${raw.length}`;
+            const header = raw.toString('utf8').split(/\r?\n\r?\n/)[0];
+            const quote = (value: string) =>
+              '"' + value.replaceAll('\\', '\\\\').replaceAll('"', '\\"') + '"';
+            const envelope = /ENVELOPE/i.test(requested)
+              ? ` ENVELOPE (${quote(header.match(/^Date:\s*(.*)$/im)?.[1]?.trim() ?? '')} ${quote(header.match(/^Subject:\s*(.*)$/im)?.[1]?.trim() ?? '')} NIL NIL NIL NIL NIL NIL NIL NIL)`
+              : '';
+            const fields = `UID ${uid} FLAGS (${flags}) RFC822.SIZE ${raw.length}${envelope}`;
             if (/BODY(?:\.PEEK)?\[\]/i.test(requested)) {
               if (!/BODY\.PEEK\[\]/i.test(requested)) this.flags.get(uid)!.add('\\Seen');
               socket.write(`* ${uid} FETCH (${fields} BODY[] {${raw.length}}\r\n`);

@@ -55,7 +55,20 @@ export async function parseMail(
     skipTextToHtml: true,
     maxHtmlLengthToParse: 2_000_000,
   });
-  const text = parsed.text ?? '';
+  let text = parsed.text ?? '';
+  // Some multipart senders provide a whitespace-only text part with a usable HTML part.
+  // Force a local HTML-only conversion rather than silently dropping that evidence.
+  if (!text.trim() && typeof parsed.html === 'string' && parsed.html.length <= 2_000_000) {
+    const fallback = await simpleParser(
+      Buffer.from(`Content-Type: text/html; charset=utf-8\r\n\r\n${parsed.html}`),
+      {
+        skipImageLinks: true,
+        skipTextToHtml: true,
+        maxHtmlLengthToParse: 2_000_000,
+      },
+    );
+    text = fallback.text ?? '';
+  }
   // mailparser may substitute "now" for an invalid Date. Never adopt that fallback.
   const headerEnd = raw.indexOf('\r\n\r\n');
   const headerText = raw

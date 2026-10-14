@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { parseArgs } from 'node:util';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -10,6 +11,15 @@ import { WindowsCredentials } from './credentials.js';
 import { denyWrite, policy } from './policy.js';
 import { Reader, safeError } from './reader.js';
 import { exportReport } from './report.js';
+import {
+  auditReviewEvidence,
+  collectReviewEvidence,
+  HeaderIndexSchema,
+  indexReviewHeaders,
+  readAuditJson,
+  writeAuditArtifact,
+  writeAuditReport,
+} from './review-audit.js';
 import { loadScan, scan } from './reviews.js';
 
 export function createResearcherServer(reader: Reader): McpServer {
@@ -180,7 +190,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
     denyWrite();
   if (['help', '--help', '-h'].includes(command)) {
     console.log(
-      'researcher-email-mcp: stdio | account add/list | credential <id> | test [id] | verify <id> <folder> | scan [--since YYYY-MM-DD] [--older] | export | config-init\nAll mailbox writes/sending/HTTP/background jobs disabled. Credentials entered only in a local terminal.',
+      'researcher-email-mcp: stdio | account add/list | credential <id> | test [id] | verify <id> <folder> | scan [--since YYYY-MM-DD] [--older] | export | config-init | review-index [--since YYYY-MM-DD] [--before YYYY-MM-DD] [--include TEXT] [--exclude TEXT] [--exclude-folder NAME] | review-evidence --index FILE [--sources FILE] | review-audit --evidence FILE\nAll mailbox writes/sending/HTTP/background jobs disabled. Credentials entered only in a local terminal. Review audit outputs are PRIVATE local data, not publication-ready.',
     );
     return;
   }
@@ -192,6 +202,87 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   const credentials = new WindowsCredentials();
   const reader = new Reader(config, credentials);
   switch (command) {
+    case 'review-index': {
+      const { values } = parseArgs({
+        args: argv.slice(1),
+        options: {
+          since: { type: 'string' },
+          before: { type: 'string' },
+          include: { type: 'string', multiple: true },
+          exclude: { type: 'string', multiple: true },
+          'exclude-folder': { type: 'string', multiple: true },
+        },
+      });
+      const result = await indexReviewHeaders(reader, {
+        since: values.since,
+        before: values.before,
+        include: values.include,
+        exclude: values.exclude,
+        excludeFolders: values['exclude-folder'],
+      });
+      const file = await writeAuditArtifact('headers', result);
+      console.log(
+        JSON.stringify({
+          file,
+          headers: result.headers.length,
+          candidates: result.headers.filter((h) => h.candidate).length,
+          errors: result.errors.length,
+          complete: result.complete,
+        }),
+      );
+      if (!result.complete) process.exitCode = 1;
+      return;
+    }
+    case 'review-evidence': {
+      const { values } = parseArgs({
+        args: argv.slice(1),
+        options: {
+          index: { type: 'string' },
+          sources: { type: 'string' },
+        },
+      });
+      if (!values.index) throw new Error('INDEX_REQUIRED');
+      const index = HeaderIndexSchema.parse(await readAuditJson(values.index));
+      const selected = values.sources
+        ? z
+            .array(z.string())
+            .max(200000)
+            .parse(await readAuditJson(values.sources))
+        : undefined;
+      const result = await collectReviewEvidence(reader, index, selected);
+      const file = await writeAuditArtifact('evidence', result);
+      console.log(
+        JSON.stringify({
+          file,
+          messages: result.messages.length,
+          errors: result.errors.length,
+          complete: result.complete,
+        }),
+      );
+      if (!result.complete) process.exitCode = 1;
+      return;
+    }
+    case 'review-audit': {
+      const { values } = parseArgs({
+        args: argv.slice(1),
+        options: { evidence: { type: 'string' } },
+      });
+      if (!values.evidence) throw new Error('EVIDENCE_REQUIRED');
+      const result = await auditReviewEvidence(
+        (await readAuditJson(values.evidence)) as Parameters<typeof auditReviewEvidence>[0],
+        config.reviewIndex,
+      );
+      console.log(
+        JSON.stringify({
+          files: await writeAuditReport(result),
+          tasks: result.scan.tasks.length,
+          gaps: result.gaps.length,
+          complete: result.scan.complete,
+        }),
+      );
+      if (!result.scan.complete) process.exitCode = 1;
+      return;
+    }
     case 'stdio': {
       const server = createResearcherServer(reader);
       await server.connect(new StdioServerTransport());

@@ -11,6 +11,7 @@ import { parseMail } from './mail.js';
 import { createResearcherServer } from './main.js';
 import { Reader } from './reader.js';
 import { exportReport } from './report.js';
+import { auditReviewEvidence, collectReviewEvidence, indexReviewHeaders } from './review-audit.js';
 import { associateIndex, extract, merge, scan } from './reviews.js';
 import { SyntheticImapServer } from './test-server.js';
 
@@ -66,6 +67,26 @@ async function setup(messages = [accepted, multipart]) {
   return { server, reader, root };
 }
 describe('integration: real ImapFlow loopback protocol', () => {
+  it('header index uses ENVELOPE only, evidence uses PEEK, audit reports private candidates', async () => {
+    const { reader, server } = await setup();
+    const before = await reader.snapshot('synthetic', 'INBOX');
+    server.commands.length = 0;
+    const index = await indexReviewHeaders(reader, { since: '2026-01-01' });
+    expect(index.headers).toHaveLength(2);
+    expect(index.complete).toBe(true);
+    expect(server.commands.some((c) => /ENVELOPE/.test(c))).toBe(true);
+    expect(server.commands.some((c) => /BODY/.test(c))).toBe(false);
+    const evidence = await collectReviewEvidence(reader, index);
+    expect(evidence.messages).toHaveLength(2);
+    const audit = await auditReviewEvidence(evidence);
+    expect(audit.scan.tasks.length).toBeGreaterThan(0);
+    expect(await reader.snapshot('synthetic', 'INBOX')).toEqual(before);
+    expect(server.commands.some((c) => /\bSELECT\b|\bSTORE\b|APPEND|EXPUNGE/.test(c))).toBe(false);
+    reader.config.maxFolderMessages = 1;
+    const limited = await indexReviewHeaders(reader, { since: '2026-01-01' });
+    expect(limited.complete).toBe(false);
+    expect(limited.coverage.some((c) => c.limited)).toBe(true);
+  });
   it('pagination window is stable when new mail arrives between capped pages', async () => {
     const { reader, server } = await setup();
     reader.config.maxFolderMessages = 2;

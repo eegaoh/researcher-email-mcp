@@ -111,7 +111,7 @@ export function deadlineDate(line: string): {
   const iso =
     line.match(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/) ??
     line.match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日?/);
-  const en1 = line.match(/\b(\d{1,2})\s+([A-Za-z]{3,9})\s*,?\s*(20\d{2})\b/);
+  const en1 = line.match(/\b(\d{1,2})[-\s]+([A-Za-z]{3,9})[-\s]+,?\s*(20\d{2})\b/);
   const en2 = line.match(/\b([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\s*,?\s*(20\d{2})\b/);
   const ambiguous = line.match(/\b\d{1,2}\/\d{1,2}\/20\d{2}\b/);
   let year = 0,
@@ -149,21 +149,24 @@ export function extract(mail: Mail): Event | null {
   // Require labelled manuscript identity or an unmistakable manuscript code.
   const idMatch =
     text.match(
-      /(?:Manuscript\s*(?:ID|Number|No\.?|#)|Paper\s*(?:ID|Number|No\.?|#)|稿件(?:编号|号)|稿号)\s*[:：#]?\s*([A-Za-z0-9][A-Za-z0-9._/-]{3,80})/i,
+      /(?:Manuscript\s*(?:ID\b|Number\b|No\.?\b|#)|Paper\s*(?:ID\b|Number\b|No\.?\b|#)|稿件(?:编号|号)|稿号)\s*[:：#]?\s*([A-Za-z0-9][A-Za-z0-9._/-]{3,80})/i,
     ) ??
-    text.match(/\b([A-Z]{2,12}[-.]\d{4}[-.]\d{3,8}(?:\.R\d+)?)\b/) ??
-    text.match(/\b([A-Z]{2,12}-\d{3,8}-20\d{2}(?:\.R\d+)?)\b/);
-  if (!idMatch || !/review|referee|审稿|评审/i.test(text)) return null;
+    text.match(/\b([A-Z]{2,12}-D-\d{2}-\d{3,8}(?:[._-]?R\d+)?)\b/) ??
+    text.match(/\b([A-Z]{2,12}[-.]\d{4}(?:[-.]\d{2})?[-.]\d{3,8}(?:[._-]?R\d+)?)\b/) ??
+    text.match(/\b([A-Z]{2,12}-\d{3,8}-20\d{2}(?:[._-]?R\d+)?)\b/);
+  if (!idMatch || !/review|referee|审稿|评审|复审|送审/i.test(text)) return null;
   const raw = idMatch[1].replace(/[.,;]+$/, '').toUpperCase();
-  const suffix = raw.match(/[._-]R(\d+)$/);
+  const suffix = raw.match(/[._-]?R(\d+)$/);
   const round = suffix
     ? +suffix[1]
     : /second (?:round|review)|二审|第二轮/i.test(text)
       ? 1
       : /third (?:round|review)|三审|第三轮/i.test(text)
         ? 2
-        : 0;
-  const manuscript = raw.replace(/[._-]R\d+$/, '');
+        : /复审|re-review|revised manuscript/i.test(text)
+          ? 1
+          : 0;
+  const manuscript = raw.replace(/[._-]?R\d+$/, '');
   const explicitJournal = text.match(/(?:^|\n)(?:Journal|期刊)\s*[:：]\s*([^\n]+)/i)?.[1]?.trim();
   const namedJournal = text.match(/IEEE Transactions on [A-Za-z &]+/)?.[0]?.trim();
   const journal = explicitJournal ?? namedJournal ?? manuscript.split(/[-.]/)[0];
@@ -175,6 +178,12 @@ export function extract(mail: Mail): Event | null {
   let statusEvidence: Evidence | null = null;
   const deadlines: Deadline[] = [];
   const warnings = [...mail.warnings];
+  if (
+    !suffix &&
+    /复审|re-review|revised manuscript/i.test(text) &&
+    !/second (?:round|review)|二审|第二轮|third (?:round|review)|三审|第三轮/i.test(text)
+  )
+    warnings.push('复审具体轮次未明：仅暂按至少R1归组，需核实是否更高轮次');
   for (const line of lines) {
     if (
       /\b(?:not|haven't|have not|has not|yet to|please|must|need to|required to|will)\b.{0,35}(?:submit|submitted)|未提交|请提交|尚未提交/i.test(
@@ -220,16 +229,31 @@ export function extract(mail: Mail): Event | null {
       line,
     );
     if (due) {
+      if (
+        /extend|extension|延期|延长/i.test(line) &&
+        /request|could|would|can you|申请|请求|能否/i.test(line)
+      ) {
+        warnings.push('发现延期申请但没有获批证据：不替代当前期限，需核实');
+        continue;
+      }
       const kind =
         /respond|response|accept or decline|reply.{0,30}invitation|回复.{0,10}邀请|邀请回复/i.test(
           line,
         )
           ? '邀请回复'
           : '审稿';
+      // Author revision deadlines are not reviewer deadlines; leave them out of the reviewer timeline.
+      if (
+        /your (?:revised manuscript|revision)|submit.{0,25}revised (?:paper|manuscript)|作者.{0,12}(?:修回|修改)|修回截止/i.test(
+          line,
+        )
+      )
+        continue;
       const parsed = deadlineDate(line);
-      const extension = /extend|extension|new deadline|revised deadline|延期|延长|新的截止/i.test(
-        line,
-      );
+      const extension =
+        /(?:has been|is|was) extended|(?:new|revised) (?:review )?deadline|延期(?:已获批准|至)|延长至|新的截止/i.test(
+          line,
+        ) && !/request|could|would|can you|申请|请求|能否/i.test(line);
       deadlines.push({
         kind,
         ...parsed,
@@ -282,6 +306,12 @@ export function merge(events: Event[]): Task[] {
     const undated = current.some((e) => !e.date && e.statusEvidence);
     const simultaneous =
       latest && statuses.some((e) => e.date === latest.date && e.status !== latest.status);
+    // A later unnumbered re-review cannot be closed by an earlier numbered-round receipt.
+    const uncertainRound = group.some(
+      (e) =>
+        e.warnings.some((w) => w.startsWith('复审具体轮次未明')) &&
+        (!e.date || !latest?.date || e.date >= latest.date),
+    );
     const warnings = [...new Set(group.flatMap((e) => e.warnings))];
     if (conflict) warnings.push('截止日期证据冲突：未检测到可解释的延期');
     if (undated || simultaneous) warnings.push('状态时序无法确定或同日证据冲突');
@@ -295,10 +325,11 @@ export function merge(events: Event[]): Task[] {
       journal: group[0].journal,
       manuscript: group[0].manuscript,
       round,
-      status: undated || simultaneous ? '待确认' : (latest?.status ?? '待确认'),
+      status: undated || simultaneous || uncertainRound ? '待确认' : (latest?.status ?? '待确认'),
       needsConfirmation:
         conflict ||
         undated ||
+        uncertainRound ||
         !!simultaneous ||
         group.some((e) => e.identityUncertain || e.warnings.length > 0) ||
         !latest ||

@@ -333,3 +333,21 @@ state/
 private/
 *.eml
 !src/researcher/fixtures/*.eml
+
+# All real mailbox data and audit artifacts belong outside the repository.
+/config.json
+/review-audits/
+/acceptance/
+/attachments/
+/config-backups/
+/review-evidence*.json
+/recent-review-evidence.json
+/review-mail-index.json
+/review-scan-gaps.json
+/reviews.json
+/validation-summary.json
+/readonly-verification.json
+*.pst
+*.ost
+*.pfx
+*.pem
